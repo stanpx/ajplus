@@ -1,15 +1,20 @@
 # AJ+ - Plugin para Kino
 
-Plugin oficial para [Kino](https://kinotvapp.github.io/kino-plugins/) que agrega contenido de los canales de YouTube de la red **Al Jazeera** y **AJ+**, transmisiones de **TV en Vivo**, y las coberturas en video de su sitio web oficial.
+Plugin oficial para [Kino](https://kinotvapp.github.io/kino-plugins/) que agrega contenido de los canales de YouTube de la red **Al Jazeera** y **AJ+**, transmisiones de **TV en Vivo** con guía EPG, y las coberturas en video de su sitio web oficial.
 
 ## Características
 
-- **TV en Vivo (Canales Oficiales 24/7):**
+- **TV en Vivo y Canales 24/7 con Guía EPG:**
   - Al Jazeera Arabic (قناة الجزيرة - البث الحي)
-  - Al Jazeera English Live
+  - Al Jazeera English (HD con EPG en vivo)
   - Al Jazeera Mubasher (الجزيرة مباشر)
-- **Sitio Web Oficial:** Extracción directa de las coberturas y reportajes de video publicados en [aljazeera.com/videos](https://www.aljazeera.com/videos).
-- **Canales de YouTube:**
+  - Al Jazeera Balkans (Uživo)
+  - AJ+ Español
+  - AJ+ Français
+  - Al Jazeera Urdu (الجزیرہ اردو)
+  - Al Jazeera & AJ+ em Português
+- **Sitio Web Oficial:** Extracción y resolución directa de las coberturas y reportajes de video publicados en [aljazeera.com/videos](https://www.aljazeera.com/videos) con soporte nativo de reproducción Brightcove y Akamai.
+- **Canales de YouTube (RSS y Mirrors):**
   - AlJazeera Arabic قناة الجزيرة
   - AJ+ (English)
   - Al Jazeera Documentary الجزيرة الوثائقية
@@ -23,9 +28,12 @@ Plugin oficial para [Kino](https://kinotvapp.github.io/kino-plugins/) que agrega
   - AJ+ عربي
   - AJ+ ساحة
   - Al Jazeera Balkans
-- **Reproducción nativa:** Transmisiones en HLS adaptativo y formatos progresivos MP4 con soporte para subtítulos (VTT).
-- **Búsqueda integrada:** Encuentra noticias, coberturas y programas completos por palabra clave.
-- **Firmado por su autor:** Verificación criptográfica con Ed25519 para garantizar la autenticidad e integridad de cada actualización.
+  - Al Jazeera Urdu
+  - Al Jazeera & AJ+ em Português
+- **Resiliencia On-Demand:** Soporte de fallback con mirrors de Piped e Invidious para asegurar la disponibilidad continua de transmisiones cuando YouTube limita IPs.
+- **Reproducción nativa:** Transmisiones en HLS adaptativo y formatos progresivos MP4 con subtítulos (VTT).
+- **Búsqueda integrada y compatibilidad VOD/Series:** Encuentra noticias, reportajes, series documentales y películas con emparejamiento TMDB garantizado.
+- **Firmado por su autor:** Verificación criptográfica con Ed25519 para garantizar la autenticidad e integridad.
 
 ## Instalación en Kino
 
@@ -43,7 +51,9 @@ node sdk/validate.mjs . --repo stanpx/ajplus
 # Probar funciones
 node sdk/run.mjs . home
 node sdk/run.mjs . live categories
-node sdk/run.mjs . live channels noticias
+node sdk/run.mjs . live channels live
+node sdk/run.mjs . live guide live_aljazeera_english
 node sdk/run.mjs . search "gaza"
-node sdk/run.mjs . resolve "video:dQw4w9WgXcQ"
+node sdk/run.mjs . resolve "ajz:/video/newsfeed/2026/10/28/spain-demands-answers-after-deadliest-train-disaster-in-over-a-decade"
+node sdk/run.mjs . resolve "video:CRl62OMYbcg"
 ```

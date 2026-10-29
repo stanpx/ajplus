@@ -1,10 +1,10 @@
 {
   "id": "ajplus",
   "name": "AJ+",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "apiVersion": 5,
   "entry": "plugin.js",
-  "description": "Canales de noticias, reportajes, documentales y transmisiones en vivo de Al Jazeera y AJ+ junto a la cobertura de su sitio web oficial.",
+  "description": "Canales de noticias, reportajes, documentales y transmisiones en vivo de Al Jazeera y AJ+ en Español, Inglés, Árabe, Portugués, Francés, Urdú y Balcanes con guía EPG.",
   "author": "stanpx",
   "homepage": "https://github.com/stanpx/ajplus",
   "icon": "icon.png",
@@ -27,7 +27,34 @@
     "players.brightcove.net",
     "*.brightcove.net",
     "edge.api.brightcove.com",
-    "*.getaj.net"
+    "manifest.prod.boltdns.net",
+    "*.boltdns.net",
+    "*.getaj.net",
+    "list.iptvcat.com",
+    "*.iptvcat.com",
+    "i.mjh.nz",
+    "*.mjh.nz",
+    "epg.pw",
+    "*.epg.pw",
+    "thehlive.com",
+    "*.thehlive.com",
+    "i.imgur.com",
+    "*.imgur.com",
+    "pipedapi.wireway.ch",
+    "piped.wireway.ch",
+    "*.wireway.ch",
+    "pipedapi.ducks.party",
+    "piped.ducks.party",
+    "*.ducks.party",
+    "pipedapi.kavin.rocks",
+    "piped.kavin.rocks",
+    "*.kavin.rocks",
+    "invidious.tiekoetter.com",
+    "*.tiekoetter.com",
+    "invidious.nerdvpn.de",
+    "*.nerdvpn.de",
+    "inv.nadeko.net",
+    "*.nadeko.net"
   ],
   "streamHosts": "any",
   "liveStreamHosts": "any",
@@ -46,6 +73,6 @@
   ],
   "signature": {
     "authorKey": "6f5fc734f744d974a1fe0c21a0e7edf6e0c9ff2e35a01ffc12d9abad629d55ef",
-    "value": "1b314251e438ea0b0a71a6248c367f7faf0ba1d8d679707f725c8209687eb0e074939106c5a1b8a862e03e944c5adb23d3ddc93d5af1f7003febabff00acfc07"
+    "value": "12b871970e12ac1c312500bd760d1143b1ea4f1b057703193b30bf9b5d63dd087588b2aa9a081e5eea1537423d05f069a3e0a8bc2f82173666504fc3e0bb9200"
   }
 }
