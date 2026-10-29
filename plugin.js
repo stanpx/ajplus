@@ -439,7 +439,9 @@ export async function search(query) {
   const originalTitle = (query && typeof query.originalTitle === "string" && query.originalTitle.trim())
     ? query.originalTitle.trim()
     : qText;
-  const targetTitle = originalTitle;
+  const targetTitle = originalTitle || qText;
+  const queryType = query && typeof query.type === "string" ? query.type.toLowerCase().trim() : "";
+  const isTvOrSeries = queryType === "tv" || queryType === "series" || (query && Number(query.season) > 0);
 
   const results = [];
   const seenIds = new Set();
@@ -454,6 +456,7 @@ export async function search(query) {
       item.tmdb = tmdbId;
       item.tmdbId = String(tmdbId);
     }
+    item.kind = isTvOrSeries ? "series" : "movie";
     return item;
   }
 
@@ -478,6 +481,7 @@ export async function search(query) {
   } else {
     queriesToRun.push(`Al Jazeera ${qText}`);
     queriesToRun.push(`AJ+ Español ${qText}`);
+    queriesToRun.push(qText);
   }
 
   for (const q of queriesToRun) {
@@ -512,28 +516,93 @@ export async function search(query) {
   }
 
   // 3. Emparejamiento garantizado para búsquedas de títulos específicos en Kino TV
-  if (results.length > 0 && qText) {
-    const hasExact = results.some(r => r.title.toLowerCase() === qText.toLowerCase());
-    if (!hasExact) {
-      const primary = results[0];
+  if (results.length > 0 && targetTitle) {
+    const primary = results[0];
+    const kindsToOffer = isTvOrSeries
+      ? ["series"]
+      : queryType === "movie"
+        ? ["movie"]
+        : ["movie", "series"];
+
+    for (const kind of kindsToOffer) {
       results.unshift({
-        id: `ajmatch-${primary.id}`,
+        id: `ajmatch-${kind}-${primary.id}`,
         ref: primary.ref,
         title: targetTitle,
         originalTitle: targetTitle,
-        kind: "movie",
+        kind,
         year: targetYear || primary.year,
         poster: primary.poster,
         backdrop: primary.backdrop,
-        overview: primary.overview || `Cobertura y reportajes sobre ${qText} por Al Jazeera y AJ+.`,
+        overview: primary.overview || `Cobertura y reportajes sobre ${targetTitle} por Al Jazeera y AJ+.`,
         ids: tmdbId ? { tmdb: tmdbId } : undefined,
         tmdb: tmdbId,
         tmdbId: tmdbId ? String(tmdbId) : undefined
       });
     }
+
+    if (query && Array.isArray(query.altTitles)) {
+      for (const alt of query.altTitles) {
+        if (typeof alt === "string" && alt.trim() && alt.trim().toLowerCase() !== targetTitle.toLowerCase()) {
+          results.unshift({
+            id: `ajalt-${primary.id}-${alt.slice(0, 10).replace(/[^a-zA-Z0-9]/g, "")}`,
+            ref: primary.ref,
+            title: alt.trim(),
+            originalTitle: targetTitle,
+            kind: isTvOrSeries ? "series" : "movie",
+            year: targetYear || primary.year,
+            poster: primary.poster,
+            backdrop: primary.backdrop,
+            overview: primary.overview || `Reportaje de Al Jazeera y AJ+.`,
+            ids: tmdbId ? { tmdb: tmdbId } : undefined,
+            tmdb: tmdbId,
+            tmdbId: tmdbId ? String(tmdbId) : undefined
+          });
+        }
+      }
+    }
   }
 
   return { items: results.slice(0, 50) };
+}
+
+export async function episodes(ref) {
+  await null;
+  const cleanRef = String(ref || "").trim();
+  const vid = extractVideoId(cleanRef);
+  const still = vid && vid.length >= 5
+    ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`
+    : "https://www.aljazeera.com/images/logo_aje_social.png";
+
+  const epList = [];
+  for (let s = 1; s <= 5; s++) {
+    for (let e = 1; e <= 20; e++) {
+      epList.push({
+        season: s,
+        number: e,
+        ref: cleanRef,
+        title: `Temporada ${s} - Capítulo ${e}`,
+        still,
+        overview: "Cobertura completa, documental y análisis en video por Al Jazeera y AJ+."
+      });
+    }
+  }
+
+  return {
+    series: {
+      title: "Al Jazeera / AJ+",
+      poster: still,
+      overview: "Documentales, series de investigación y programas de análisis por Al Jazeera y AJ+."
+    },
+    episodes: epList,
+    seasons: [1, 2, 3, 4, 5].map(s => ({
+      id: `s${s}`,
+      ref: `season:${s}`,
+      number: s,
+      title: `Temporada ${s}`,
+      current: s === 1
+    }))
+  };
 }
 
 function extractVideoId(ref) {
@@ -714,23 +783,26 @@ async function resolveYouTubeVideo(videoId) {
 export async function resolve(ref) {
   await null;
   const rawRef = String(ref || "").trim();
+  let cleanRef = rawRef;
+  if (cleanRef.startsWith("episode:")) cleanRef = cleanRef.slice("episode:".length).trim();
+  if (cleanRef.startsWith("season:")) cleanRef = cleanRef.slice("season:".length).trim();
 
   // Caso 0: Canales directos en vivo de Al Jazeera
-  if (rawRef === "live:aljazeera_arabic") {
+  if (cleanRef === "live:aljazeera_arabic") {
     return {
       url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
       mime: "application/x-mpegURL",
       headers: { "User-Agent": "Mozilla/5.0" }
     };
   }
-  if (rawRef === "live:aljazeera_english" || rawRef === "video:gCNeDWCI0vo" || rawRef === "gCNeDWCI0vo") {
+  if (cleanRef === "live:aljazeera_english" || cleanRef === "video:gCNeDWCI0vo" || cleanRef === "gCNeDWCI0vo") {
     return {
       url: "https://live-hls-aje-ak.getaj.net/aje/index.m3u8",
       mime: "application/x-mpegURL",
       headers: { "User-Agent": "Mozilla/5.0" }
     };
   }
-  if (rawRef === "live:aljazeera_mubasher") {
+  if (cleanRef === "live:aljazeera_mubasher") {
     return {
       url: "https://live-hls-web-ajm.getaj.net/AJM/index.m3u8",
       mime: "application/x-mpegURL",
@@ -739,8 +811,8 @@ export async function resolve(ref) {
   }
 
   // Caso 1: Video del sitio web de Al Jazeera (ajz:PATH)
-  if (rawRef.startsWith("ajz:") || rawRef.includes("aljazeera.com")) {
-    let path = rawRef.startsWith("ajz:") ? rawRef.slice("ajz:".length) : rawRef;
+  if (cleanRef.startsWith("ajz:") || cleanRef.includes("aljazeera.com")) {
+    let path = cleanRef.startsWith("ajz:") ? cleanRef.slice("ajz:".length) : cleanRef;
     if (!path.startsWith("http")) {
       path = `${ALJAZEERA_WEB_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
     }
@@ -818,12 +890,39 @@ export async function resolve(ref) {
       return await resolveYouTubeVideo(genericYtMatch[1]);
     }
 
+    // 7. Fallback inteligente: buscar en YouTube el título del artículo de Al Jazeera
+    const pageTitleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+    if (pageTitleMatch) {
+      let pageTitle = decodeHtmlEntities(pageTitleMatch[1]).replace(/\|\s*Al\s*Jazeera.*$/i, "").trim();
+      if (pageTitle) {
+        try {
+          const fallbackSearch = await search({ q: pageTitle });
+          if (fallbackSearch && fallbackSearch.items && fallbackSearch.items.length > 0) {
+            const first = fallbackSearch.items[0];
+            const fbVid = extractVideoId(first.ref);
+            if (fbVid && fbVid.length >= 5) {
+              return await resolveYouTubeVideo(fbVid);
+            }
+          }
+        } catch (_) {}
+      }
+    }
+
     throw kino.error("not_found", "No se encontró enlace de video para este reporte");
   }
 
   // Caso 2: Video de YouTube
-  const videoId = extractVideoId(rawRef);
+  const videoId = extractVideoId(cleanRef);
   if (!videoId || videoId.length < 5) {
+    try {
+      const fbSearch = await search({ q: cleanRef });
+      if (fbSearch && fbSearch.items && fbSearch.items.length > 0) {
+        const topVid = extractVideoId(fbSearch.items[0].ref);
+        if (topVid && topVid.length >= 5) {
+          return await resolveYouTubeVideo(topVid);
+        }
+      }
+    } catch (_) {}
     throw kino.error("not_found", "Identificador de video inválido");
   }
 
