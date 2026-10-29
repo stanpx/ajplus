@@ -1,0 +1,4 @@
+*.pem
+.kino-cookies.json
+.kino-secrets.json
+node_modules/
