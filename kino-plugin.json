@@ -1,7 +1,7 @@
 {
   "id": "ajplus",
   "name": "AJ+",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "apiVersion": 5,
   "entry": "plugin.js",
   "description": "Canales de noticias, reportajes, documentales y transmisiones en vivo de Al Jazeera y AJ+ junto a la cobertura de su sitio web oficial.",
@@ -41,6 +41,6 @@
   ],
   "signature": {
     "authorKey": "6f5fc734f744d974a1fe0c21a0e7edf6e0c9ff2e35a01ffc12d9abad629d55ef",
-    "value": "505bb325e94b7f2acdf8de88058b47f9cd625bf0d1a56acbe587d18b33cec79d4fcc05d61e5b411131db714d322df1c93883058fa1ebb43c4becd03934632806"
+    "value": "2f821fe244ddaffc415ba6302d15b0aece909dc710c193d1ce8f18f1bdee380f2334edd3a36f39902c8e2165e444e7ed34301de4485cd9710c293ec7fb967903"
   }
 }
