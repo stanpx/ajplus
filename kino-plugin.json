@@ -1,12 +1,13 @@
 {
   "id": "ajplus",
   "name": "AJ+",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "apiVersion": 5,
   "entry": "plugin.js",
-  "description": "Canales de noticias, reportajes y documentales de Al Jazeera y AJ+ en YouTube y su sitio web oficial.",
+  "description": "Canales de noticias, reportajes, documentales y transmisiones en vivo de Al Jazeera y AJ+ junto a la cobertura de su sitio web oficial.",
   "author": "stanpx",
   "homepage": "https://github.com/stanpx/ajplus",
+  "icon": "icon.png",
   "hosts": [
     "www.youtube.com",
     "youtube.com",
@@ -22,20 +23,24 @@
     "*.akamaized.net",
     "players.brightcove.net",
     "*.brightcove.net",
-    "edge.api.brightcove.com"
+    "edge.api.brightcove.com",
+    "*.getaj.net"
   ],
   "streamHosts": "any",
+  "liveStreamHosts": "any",
   "capabilities": [
     "search",
     "home",
     "browse",
-    "resolve"
+    "resolve",
+    "channels"
   ],
   "categories": [
-    "movies"
+    "movies",
+    "live"
   ],
   "signature": {
     "authorKey": "6f5fc734f744d974a1fe0c21a0e7edf6e0c9ff2e35a01ffc12d9abad629d55ef",
-    "value": "b7b15b25ffc5280ec572da1575f5347fecd81b19845c2ff532ea6ee57b91075fe157a4851507e9c0aa5f39bb1cf178388e5c61f5e6acbfdf107adc276749630e"
+    "value": "505bb325e94b7f2acdf8de88058b47f9cd625bf0d1a56acbe587d18b33cec79d4fcc05d61e5b411131db714d322df1c93883058fa1ebb43c4becd03934632806"
   }
 }

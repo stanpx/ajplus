@@ -522,6 +522,22 @@ export async function resolve(ref) {
   await null;
   const rawRef = String(ref || "").trim();
 
+  // Caso 0: Canales directos en vivo de Al Jazeera
+  if (rawRef === "live:aljazeera_arabic") {
+    return {
+      url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
+      mime: "application/x-mpegURL",
+      headers: { "User-Agent": "Mozilla/5.0" }
+    };
+  }
+  if (rawRef === "live:aljazeera_mubasher") {
+    return {
+      url: "https://live-hls-web-ajm.getaj.net/AJM/index.m3u8",
+      mime: "application/x-mpegURL",
+      headers: { "User-Agent": "Mozilla/5.0" }
+    };
+  }
+
   // Caso 1: Video del sitio web de Al Jazeera (ajz:PATH)
   if (rawRef.startsWith("ajz:") || rawRef.includes("aljazeera.com")) {
     let path = rawRef.startsWith("ajz:") ? rawRef.slice("ajz:".length) : rawRef;
@@ -727,5 +743,57 @@ export async function resolve(ref) {
     subtitles: collectedSubtitles.length > 0 ? collectedSubtitles : undefined,
     alternatives: alternatives.length > 0 ? alternatives : undefined,
     expiresInSeconds: minExpires
+  };
+}
+
+export async function liveCategories() {
+  await null;
+  return [
+    {
+      id: "noticias",
+      title: "Noticias y Actualidad en Vivo",
+      genre: "noticias"
+    }
+  ];
+}
+
+export async function liveChannels(params = {}) {
+  await null;
+  return {
+    items: [
+      {
+        id: "live_aljazeera_arabic",
+        title: "Al Jazeera Arabic (قناة الجزيرة)",
+        number: 1,
+        categoryId: "noticias",
+        logo: "https://www.aljazeera.net/images/logo_aja_social.png",
+        ref: "live:aljazeera_arabic",
+        stream: {
+          url: "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
+          mime: "application/x-mpegURL"
+        }
+      },
+      {
+        id: "live_aljazeera_english",
+        title: "Al Jazeera English Live",
+        number: 2,
+        categoryId: "noticias",
+        logo: "https://www.aljazeera.com/images/logo_aje_social.png",
+        ref: "video:gCNeDWCI0vo"
+      },
+      {
+        id: "live_aljazeera_mubasher",
+        title: "Al Jazeera Mubasher (الجزيرة مباشر)",
+        number: 3,
+        categoryId: "noticias",
+        logo: "https://www.aljazeera.net/images/logo_aja_social.png",
+        ref: "live:aljazeera_mubasher",
+        stream: {
+          url: "https://live-hls-web-ajm.getaj.net/AJM/index.m3u8",
+          mime: "application/x-mpegURL"
+        }
+      }
+    ],
+    next: null
   };
 }
